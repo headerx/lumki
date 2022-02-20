@@ -1,0 +1,35 @@
+models:
+    Permission:
+        id: bigInteger primary
+        name: string
+        guard_name: string
+        created_at: dateTime
+        updated_at: dateTime
+    Role:
+        id: bigInteger primary
+        name: string
+        guard_name: string
+        created_at: dateTime
+        updated_at: dateTime
+    ModelHasPermission:
+        id: false
+        permission_id: bigInteger primary
+        model_type: string
+        model_id: integer
+        indexes:
+            - primary: permission_id, model_id, model_type
+            - index: model_id, model_type
+    ModelHasRole:
+        id: false
+        role_id: bigInteger primary
+        model_type: string
+        model_id: integer
+        indexes:
+            - primary: role_id, model_id, model_type
+            - index: model_id, model_type
+    RoleHasPermission:
+        id: false
+        permission_id: bigInteger primary
+        role_id: bigInteger
+        indexes:
+            - primary: permission_id, role_id

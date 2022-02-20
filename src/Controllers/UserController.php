@@ -2,14 +2,12 @@
 
 namespace Kineticamobile\Lumki\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Route;
-use Spatie\Permission\Models\Role;
+use Laravel\Fortify\Contracts\CreatesNewUsers;
 
-class UserController extends Controller
+class UserController extends BaseController
 {
     /**
      * Display a listing of the resource.
@@ -18,8 +16,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        return view('lumki::users.index', [
-            'users' => User::orderBy('name')->paginate(10)
+        return view('lumki::' . config('lumki.theme') . '.users.index', [
+            'users' => User::orderBy('name')->paginate(10),
         ]);
     }
 
@@ -30,9 +28,9 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('lumki::users.create', [
-            'roles' => Role::all(),
-            'custom_fields' => config('lumki.custom_fields')
+        return view('lumki::' . config('lumki.theme') . '.users.create', [
+            'roles' => $this->roles->all(),
+            'custom_fields' => config('lumki.custom_fields'),
         ]);
     }
 
@@ -42,24 +40,15 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, CreatesNewUsers $createsNewUsers)
     {
         $validatedData = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
-        $data = [
-            'name' => $validatedData['name'],
-            'email' => $validatedData['email'],
-            'password' => Hash::make($validatedData['password']),
-        ];
 
-        foreach (config('lumki.custom_fields') as $item) {
-            $data[$item['name']] = $request->{$item['name']};
-        }
-
-        $user = User::create($data);
+        $user = $createsNewUsers->create($validatedData);
         $user->syncRoles(request('roles'));
 
         return redirect(route('lumki.users.index'));
@@ -73,9 +62,9 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return view('lumki::users.show', [
+        return view('lumki::' . config('lumki.theme') . '.users.show', [
             'menu' => $menu,
-            'users' => $menu->users
+            'users' => $menu->users,
         ]);
     }
 
@@ -87,10 +76,10 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        return view('lumki::users.edit', [
+        return view('lumki::' . config('lumki.theme') . '.users.edit', [
             'user' => $user,
-            'roles' => Role::all(),
-            'custom_fields' => config('lumki.custom_fields')
+            'roles' => $this->roles->all(),
+            'custom_fields' => config('lumki.custom_fields'),
         ]);
     }
 
@@ -127,6 +116,7 @@ class UserController extends Controller
 
         $user->update($validatedData);
         $user->syncRoles(request('roles'));
+
         return redirect()->route('lumki.users.index');
     }
 
@@ -139,6 +129,7 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $user->delete();
+
         return redirect()->route('lumki.users.index');
     }
 }

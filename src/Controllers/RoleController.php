@@ -2,20 +2,11 @@
 
 namespace Kineticamobile\Lumki\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Schema;
-use Raultm\Pruebas\Facades\Pruebas;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
+use Spatie\Permission\Contracts\Role;
 
-class RoleController extends Controller
+class RoleController extends BaseController
 {
-
-
-
     /**
      * Display a listing of the resource.
      *
@@ -23,8 +14,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        return view("lumki::roles.index", ["roles" => Role::paginate(8)]);
-
+        return view('lumki::' . config('lumki.theme') . '.roles.index', ['roles' => $this->roles->paginate(10)]);
     }
 
     /**
@@ -34,8 +24,8 @@ class RoleController extends Controller
      */
     public function create()
     {
-        return view("lumki::roles.create", [
-            "permissions" => Permission::all()
+        return view('lumki::roles.create', [
+            'permissions' => $this->permissions->all(),
         ]);
     }
 
@@ -47,12 +37,14 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        $role=Role::create([
-            "name" => request("name"),
-            "guard_name" => "web"
+        $roles = app(Role::class);
+        $role = $roles->create([
+            'name' => request('name'),
+            'guard_name' => 'web',
         ]);
         $role->syncPermissions(request('permissions'));
-        return redirect()->route("lumki.roles.index");
+
+        return redirect()->route('lumki.roles.index');
     }
 
     /**
@@ -63,9 +55,9 @@ class RoleController extends Controller
      */
     public function show(Role $role)
     {
-        return view("lumki::roles.show", [
-            "menu" => $menu,
-            "roles" => $menu->roles
+        return view('lumki::' . config('lumki.theme') . '.roles.show', [
+            'menu' => $menu,
+            'roles' => $menu->roles,
         ]);
     }
 
@@ -77,9 +69,9 @@ class RoleController extends Controller
      */
     public function edit(Role $role)
     {
-        return view("lumki::roles.edit", [
-            "role" => $role,
-            "permissions" => Permission::all()
+        return view('lumki::' . config('lumki.theme') . '.roles.edit', [
+            'role' => $role,
+            'permissions' => $this->permissions->all(),
         ]);
     }
 
@@ -92,8 +84,9 @@ class RoleController extends Controller
      */
     public function update(Request $request, Role $role)
     {
-        $role->syncPermissions(request('permissions'));
-        return redirect()->route("lumki.roles.index");
+        $role->syncPermissions($request->input('permissions'));
+
+        return redirect()->route('lumki.roles.index');
     }
 
     /**
@@ -104,8 +97,8 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
-
         $role->delete();
-        return redirect()->route("lumki.roles.index");
+
+        return redirect()->route('lumki.roles.index');
     }
 }

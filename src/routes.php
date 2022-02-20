@@ -24,12 +24,9 @@ Route::prefix($prefix)
     ->group(function () {
 
     // USERS
-    Route::resource('users', 'UserController');
-    // ROLES
-    Route::resource('roles', 'RoleController');
-    // PERMISSIONS
-    Route::resource('permissions', 'PermissionController');
-
-});
-
-
+        Route::resource('users', 'UserController');
+        // ROLES
+        Route::resource('roles', 'RoleController');
+        // PERMISSIONS
+        Route::resource('permissions', 'PermissionController');
+    });

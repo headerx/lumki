@@ -4,6 +4,7 @@ $lumkiPermission = "manage users";
 
 return [
     "prefix" => 'lumki',
+    'theme' => 'default',
     "lumkiPermission" => $lumkiPermission,
     "middleware" => [
         "web",

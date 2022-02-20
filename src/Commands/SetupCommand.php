@@ -4,11 +4,9 @@ namespace Kineticamobile\Lumki\Commands;
 
 use App\Models\User;
 use Illuminate\Console\Command;
-use Illuminate\Support\Str;
 use Kineticamobile\Lumki\Facades\Lumki;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
-use Symfony\Component\Process\Process;
 
 /**
  * Setup Lumki package
@@ -41,7 +39,7 @@ class SetupCommand extends Command
             __("lumki::cmd.publish_spatie_migrations"),
             function () {
                 $this->call('vendor:publish', [
-                    '--provider' => 'Spatie\Permission\PermissionServiceProvider'
+                    '--provider' => 'Spatie\Permission\PermissionServiceProvider',
                 ]);
             }
         );
@@ -50,7 +48,7 @@ class SetupCommand extends Command
             __("lumki::cmd.publish_lab404_impersonate_configuration"),
             function () {
                 $this->call('vendor:publish', [
-                    '--provider' => 'Lab404\Impersonate\ImpersonateServiceProvider'
+                    '--provider' => 'Lab404\Impersonate\ImpersonateServiceProvider',
                 ]);
             }
         );
@@ -70,14 +68,16 @@ class SetupCommand extends Command
                     Lumki::insertLineAfter(
                         app_path("Models/User.php"),
                         "use Laravel\Jetstream\HasProfilePhoto;",
-                        "use Spatie\Permission\Traits\HasRoles;")
+                        "use Spatie\Permission\Traits\HasRoles;"
+                    )
                 );
 
                 $this->info(
                     Lumki::insertLineAfter(
                         app_path("Models/User.php"),
                         "use HasProfilePhoto;",
-                        "use HasRoles;")
+                        "use HasRoles;"
+                    )
                 );
             }
         );
@@ -89,14 +89,16 @@ class SetupCommand extends Command
                     Lumki::insertLineAfter(
                         app_path("Models/User.php"),
                         "use Spatie\Permission\Traits\HasRoles;",
-                        "use Lab404\Impersonate\Models\Impersonate;")
+                        "use Lab404\Impersonate\Models\Impersonate;"
+                    )
                 );
 
                 $this->info(
                     Lumki::insertLineAfter(
                         app_path("Models/User.php"),
                         "use HasRoles;",
-                        "use Impersonate;")
+                        "use Impersonate;"
+                    )
                 );
             }
         );
@@ -109,7 +111,8 @@ class SetupCommand extends Command
                     Lumki::insertLineBefore(
                         base_path("routes/web.php"),
                         "Route::get('/', function () {",
-                        "Route::impersonate();\n")
+                        "Route::impersonate();\n"
+                    )
                 );
             }
         );
@@ -122,7 +125,8 @@ class SetupCommand extends Command
                     Lumki::insertLineBefore(
                         resource_path('views/navigation-menu.blade.php'),
                         "@if (Laravel\Jetstream\Jetstream::hasApiFeatures())",
-                        "\n@lumki\n")
+                        "\n@lumki\n"
+                    )
                 );
             }
         );
@@ -145,19 +149,16 @@ class SetupCommand extends Command
                 $user->assignRole($r3);
             }
         );
-
-
-
     }
 
     public function askStep($question, $yesCallback, $noCallback = null)
     {
-        if( $this->confirm($question, "yes") ){
+        if ($this->confirm($question, "yes")) {
             $yesCallback();
-        }else{
-            if($noCallback === null){
+        } else {
+            if ($noCallback === null) {
                 $this->info("Step Skipped.");
-            }else{
+            } else {
                 $noCallback();
             }
         }

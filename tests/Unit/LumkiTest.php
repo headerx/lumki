@@ -10,7 +10,6 @@ use Orchestra\Testbench\TestCase;
 
 class LumkiTest extends TestCase
 {
-
     public $nonExistentFilePath;
     public $filepath;
 

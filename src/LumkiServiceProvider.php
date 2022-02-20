@@ -3,7 +3,10 @@
 namespace Kineticamobile\Lumki;
 
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Spatie\Permission\Contracts\Permission;
+use Spatie\Permission\Contracts\Role;
 
 class LumkiServiceProvider extends ServiceProvider
 {
@@ -24,6 +27,20 @@ class LumkiServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
         }
+
+        Route::bind('role', function (string $value, $route) {
+            return $this->app->make(Role::class)->resolveRouteBinding(
+                $value,
+                $route->bindingFieldFor('role')
+            );
+        });
+        
+        Route::bind('permission', function (string $value, $route) {
+            return $this->app->make(Permission::class)->resolveRouteBinding(
+                $value,
+                $route->bindingFieldFor('permission')
+            );
+        });
     }
 
     /**
@@ -92,19 +109,19 @@ class LumkiServiceProvider extends ServiceProvider
                 '@can(\'' . config('lumki.lumkiPermission') . '\') '
                     .'<div class="block px-4 py-2 text-xs text-gray-400">Lumki</div>'
 
-                    .'<a href="{{ route(\'lumki.users.index\') }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">'
+                    .'<a href="{{ route(\'lumki.users.index\') }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:outline-none focus:bg-gray-100">'
                         .'{{ __(\'lumki::ui.users\') }}'
                     .'</a>'
-                    .'<a href="{{ route(\'lumki.roles.index\') }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">'
+                    .'<a href="{{ route(\'lumki.roles.index\') }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:outline-none focus:bg-gray-100">'
                         .'{{ __(\'lumki::ui.roles\') }}'
                     .'</a>'
-                    .'<a href="{{ route(\'lumki.permissions.index\') }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">'
+                    .'<a href="{{ route(\'lumki.permissions.index\') }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:outline-none focus:bg-gray-100">'
                         .'{{ __(\'lumki::ui.permissions\') }}'
                     .'</a>'
                 .' @endcan '
                 .'@impersonating'
                     .'<div class="border-t border-gray-100"></div>'
-                    .'<a href="{{ route(\'impersonate.leave\') }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">'
+                    .'<a href="{{ route(\'impersonate.leave\') }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:outline-none focus:bg-gray-100">'
                         .'{{ __(\'lumki::ui.leave_impersonation\') }}'
                     .'</a>'
                 .'@endImpersonating'
