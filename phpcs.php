@@ -37,4 +37,4 @@ return (new PhpCsFixer\Config())
         ],
         'single_trait_insert_per_statement' => true,
     ])
-    ->setFinder($finder)
+    ->setFinder($finder);
