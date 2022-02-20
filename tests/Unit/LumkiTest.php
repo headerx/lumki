@@ -4,9 +4,9 @@ namespace Tests\Unit;
 
 use Illuminate\Support\Str;
 use Kineticamobile\Lumki\Lumki;
-use Tests\TestCase;
+// use Tests\TestCase;
 
-// use Orchestra\Testbench\TestCase;
+use Orchestra\Testbench\TestCase;
 
 class LumkiTest extends TestCase
 {
