@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Kineticamobile\Lumki\Tests\Unit;
 
 use Illuminate\Support\Str;
 use Kineticamobile\Lumki\Lumki;
